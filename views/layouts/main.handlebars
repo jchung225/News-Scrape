@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>News Scrapper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        #notes {
+            float: right;
+            width: 30%;
+        }
+
+        textarea,
+        input {
+            display: block;
+            width: 100%;
+            background-color: #FCF5C7;
+        }
+
+        input {
+            height: 36px;
+            font-size: 24px;
+        }
+
+        textarea {
+            height: 200px;
+            font-size: 18px;
+        }
+    </style>
+    
+</head>
+
+<body class="black">
+    <header>
+        <nav>
+            <div class="nav-wrapper blue-grey darken-1">
+                <a href="/" class="brand-logo right">News Scrapper</a>
+                <ul id="nav-mobile" class="left hide-on-med-and-down">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a id="saveArticle">Saved Articles</a>
+                    </li>
+                    <li>
+                        <button id="scrapeBtn" class="waves-effect waves-light">Scrape News Articles!</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="parallax-container">
+        <div class="center-align white-text" style="margin-top: 150px;">
+            <h1>NEWS SCRAPPER</h1>
+            <h2>TECH VERGE EDITION</h2>
+        </div>
+
+    
+
+    <div class="parallax" style="opacity: .6">
+        <img src="http://theridgewoodblog.net/wp-content/uploads/2013/08/6276688407_12900948a2_b_large_verge_medium_landscape.jpg">
+    </div>
+
+    </div>
+    <div class="container-fluid">
+  <ul class="pagination center-align">
+    <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+    <li class="active"><a href="#!" class="white-text">1</a></li>
+    <li class="waves-effect"><a href="#!" class="white-text">2</a></li>
+    <li class="waves-effect"><a href="#!" class="white-text">3</a></li>
+    <li class="waves-effect"><a href="#!" class="white-text">4</a></li>
+    <li class="waves-effect"><a href="#!" class="white-text">5</a></li>
+    <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+  </ul>
+        {{{body}}}
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+
+</html>

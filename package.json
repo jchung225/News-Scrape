@@ -1,31 +1,37 @@
 {
-  "name": "allthenews",
+  "name": "all-the-news-that-s-fit-to-scrape",
   "version": "1.0.0",
-  "description": "All the news scraper",
+  "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "predeploy": "echo im about to deploy",
-    "postdeploy": "echo ive deployed"
-  },
-  "dependencies": {
-    "axios": "^0.19.0",
-    "body-parser": "^1.17.2",
-    "cheerio": "^0.22.0",
-    "express": "^4.17.1",
-    "express-handlebars": "^3.0.0",
-    "handlebars": "^4.5.3",
-    "mongoose": "^5.8.2",
-    "request": "^2.81.0"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jchung225/News-Scrape.git"
   },
-  "author": "",
+  "keywords": [
+    "news",
+    "scrape",
+    "scrapper",
+    "article",
+    "articles"
+  ],
+  "author": "David Tran",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/jchung225/News-Scrape/issues"
   },
-  "homepage": "https://github.com/jchung225/News-Scrape#readme"
+  "homepage": "https://github.com/jchung225/News-Scrape#readme",
+  "dependencies": {
+    "axios": "^0.18.1",
+    "body-parser": "^1.18.3",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.3",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^5.8.4",
+    "morgan": "^1.9.1",
+    "request": "^2.88.0"
+  }
 }

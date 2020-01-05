@@ -1,115 +1,112 @@
-var express = require("express");
-var exphbs = require("express-handlebars");
-var bodyParser = require("body-parser");
-var mongoose = require("mongoose");
-var Note = require("./models/Note.js");
-var Article = require("./models/Article.js");
-var request = require("request");
-var cheerio = require("cheerio");
-mongoose.Promise = Promise;
+const express = require("express");
+const bodyParser = require("body-parser");
+const logger = require("morgan");
+const mongoose = require("mongoose");
+const axios = require("axios");
+const cheerio = require("cheerio");
+const db = require("./models");
+const exphbs = require("express-handlebars");
 
-// Initialize Express
-var app = express();
+const PORT = process.env.PORT || 3000;
+const app = express();
 
-// Set Handlebars.
-app.engine("handlebars", exphbs({ defaultLayout: "main" }));
-app.set("view engine", "handlebars");
-
-// Make public a static dir
+app.use(logger("dev"));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
-// Database configuration with mongoose
-mongoose.connect("");
-var db = mongoose.connection;
+app.set('view engine', 'handlebars');
+app.engine(
+	'handlebars', exphbs({
+		defaultLayout: 'main'
+	})
+);
 
-// Show any mongoose errors
-db.on("error", function(error) {
-  console.log("Mongoose Error: ", error);
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/newsscrapper";
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI);
+
+app.get('/', (req, res) => {
+  res.render('index');
 });
 
-// Once logged in to the db through mongoose, log a success message
-db.once("open", function() {
-  console.log("Mongoose connection established!");
-});
-
-// A GET request to scrape the selected website
 app.get("/scrape", function(req, res) {
-  request("http://www.echojs.com/", function(error, response, html) {
-    var $ = cheerio.load(html);
-    $("article h2").each(function(i, element) {
-      var result = {};
-      result.title = $(this).children("a").text();
-      result.link = $(this).children("a").attr("href");
-      var entry = new Article(result);
+  axios.get("https://www.theverge.com/tech").then(function(response) {
+    const $ = cheerio.load(response.data);
 
-      // Now, save that entry to the db
-      entry.save(function(err, doc) {
-        if (err) {
-          console.log(err);
-        }
-        else {
-          console.log(doc);
-        }
-      });
+    $("div.c-entry-box--compact--article").each(function(i, element) {
+      let result = {};
+      result.title = $(element).children("div").children("h2").children("a").text();
+      result.link = $(element).children("div").children("h2").children("a").attr("href");
 
+      db.Article.create(result)
+        .then(function(dbArticle) {
+          console.log(dbArticle);
+        })
+        .catch(function(err) {
+          return res.json(err);
+        });
     });
+  res.send();
   });
-  res.send("Scrape Completed!");
 });
 
-// This will get the articles we scraped from the mongoDB
+
 app.get("/articles", function(req, res) {
-  Article.find({}, function(error, doc) {
-    // Log any errors
-    if (error) {
-      console.log(error);
-    }
-    else {
-      res.json(doc);
-    }
-  });
+  db.Article.find({})
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
 });
 
-// Grab an article by it's ObjectId
+app.get("articles/save", (req, res) => {
+  db.Article.find({
+    isSaved: true
+  }).then((dbArticle) => {
+    res.json(dbArticle);
+  }).catch((err) => {
+    res.json(err);
+  })
+})
+
+
 app.get("/articles/:id", function(req, res) {
-  Article.findOne({ "_id": req.params.id })
-  .populate("note")
-  .exec(function(error, doc) {
-    if (error) {
-      console.log(error);
-    }
-    else {
-      res.json(doc);
-    }
-  });
+  
+  db.Article.findOne({ _id: req.params.id })
+    .populate("note")
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
 });
+app.post("/articles/save/:id", (req, res) => {
+  db.Article.findOneAndUpdate({_id: req.params.id }, {isSaved: req.body.saved})
+  .then((dbArticle) => {
+    res.json(dbArticle);
+  })
+  .catch((err) => {
+    res.json(err);
+  })
+})
 
-
-// Create a new note or replace an existing note
 app.post("/articles/:id", function(req, res) {
-  var newNote = new Note(req.body);
-  newNote.save(function(error, doc) {
-    // Log any errors
-    if (error) {
-      console.log(error);
-    }
-    else {
-      Article.findOneAndUpdate({ "_id": req.params.id }, { "note": doc._id })
-      .exec(function(err, doc) {
-        if (err) {
-          console.log(err);
-        }
-        else {
-          res.send(doc);
-        }
-      });
-    }
-  });
+  
+  db.Note.create(req.body)
+    .then(function(dbNote) {
+      return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { returnNewDocument: true });
+    })
+    .then(function(dbArticle) {  
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
 });
 
-// Listen on port 3000
-app.listen(3000, function() {
-  console.log("");
-  console.log("All The News Scrapper App Now Running on Port 3000!");
-  console.log("---------------------------------------------------------------");
+app.listen(PORT, function() {
+  console.log("App running on port " + PORT + "!");
 });
