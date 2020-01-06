@@ -1,11 +1,13 @@
 {
-  "name": "all-the-news-that-s-fit-to-scrape",
+  "name": "News-Scrape",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node app.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "repository": {
     "type": "git",
@@ -18,12 +20,12 @@
     "article",
     "articles"
   ],
-  "author": "David Tran",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/jchung225/News-Scrape/issues"
   },
-  "homepage": "https://github.com/jchung225/News-Scrape#readme",
+  "homepage": "https://jchung225.github.io/News-Scrape",
   "dependencies": {
     "axios": "^0.18.1",
     "body-parser": "^1.18.3",
@@ -33,5 +35,8 @@
     "mongoose": "^5.8.4",
     "morgan": "^1.9.1",
     "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^2.1.1"
   }
 }
